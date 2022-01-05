@@ -1,0 +1,8 @@
+{
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true,
+  "deno.enable": true,
+  "deno.lint": true,
+  "deno.importMap": "./importMap.json",
+  "deno.config": "./tsconfig.json"
+}
