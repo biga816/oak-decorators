@@ -1,4 +1,4 @@
-import { Controller, Get, Headers } from "ork-decorators";
+import { Controller, Get, Headers } from "ork_decorators";
 
 @Controller()
 export class AppController {

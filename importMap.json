@@ -1,5 +1,0 @@
-{
-  "imports": {
-    "ork-decorators": "./src/mod.ts"
-  }
-}

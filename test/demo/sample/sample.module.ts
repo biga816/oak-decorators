@@ -1,4 +1,4 @@
-import { Module } from "ork-decorators";
+import { Module } from "ork_decorators";
 import { SampleController } from "./sample.controller.ts";
 import { SampleService } from "./sample.service.ts";
 

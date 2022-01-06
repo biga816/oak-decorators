@@ -3,6 +3,6 @@
   "editor.formatOnSave": true,
   "deno.enable": true,
   "deno.lint": true,
-  "deno.importMap": "./importMap.json",
+  "deno.importMap": "./test/importMap.json",
   "deno.config": "./tsconfig.json"
 }
