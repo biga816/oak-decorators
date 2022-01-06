@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Query, Param, Body } from "ork_decorators";
+import { Controller, Get, Post, Query, Param, Body, IP } from "ork_decorators";
 import { SampleService } from "./sample.service.ts";
 
 @Controller()
@@ -16,7 +16,7 @@ export class SampleController {
   }
 
   @Get("test/:id")
-  test(@Param("id") id: string, @Query() test: any) {
-    return { id, ...test };
+  test(@Param("id") id: string, @Query() test: any, @IP() ip: string) {
+    return { id, ...test, ip };
   }
 }

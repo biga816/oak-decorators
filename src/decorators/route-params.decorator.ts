@@ -29,6 +29,10 @@ export function Response(property?: string): ParameterDecorator {
   return createPipesRouteParamDecorator(RouteParamtypes.RESPONSE)(property);
 }
 
+export function Next(property?: string): ParameterDecorator {
+  return createPipesRouteParamDecorator(RouteParamtypes.NEXT)(property);
+}
+
 export function Query(property?: string): ParameterDecorator {
   return createPipesRouteParamDecorator(RouteParamtypes.QUERY)(property);
 }
@@ -43,4 +47,8 @@ export function Body(property?: string): ParameterDecorator {
 
 export function Headers(property?: string): ParameterDecorator {
   return createPipesRouteParamDecorator(RouteParamtypes.HEADERS)(property);
+}
+
+export function IP(property?: string): ParameterDecorator {
+  return createPipesRouteParamDecorator(RouteParamtypes.IP)(property);
 }

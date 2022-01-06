@@ -5,6 +5,8 @@ import { ActionMetadata, RouteArgsMetadata } from "../interfaces/mod.ts";
 import { RouteParamtypes } from "../enums/mod.ts";
 import { METHOD_METADATA, ROUTE_ARGS_METADATA } from "../const.ts";
 
+type Next = () => Promise<unknown>;
+
 export function Controller<T extends { new (...instance: any[]): Object }>(
   path?: string
 ) {
@@ -32,11 +34,11 @@ export function Controller<T extends { new (...instance: any[]): Object }>(
 
           (route as any)[meta.method](
             `/${meta.path}`,
-            async (context: RouterContext<string>) => {
+            async (context: RouterContext<string>, next: Next) => {
               const inputs = await Promise.all(
                 argsMetadataList
                   .sort((a, b) => a.index - b.index)
-                  .map(async (data) => getContextData(data, context))
+                  .map(async (data) => getContextData(data, context, next))
               );
               context.response.body = (this as any)[meta.functionName](
                 ...inputs
@@ -61,26 +63,44 @@ export function Controller<T extends { new (...instance: any[]): Object }>(
     };
 }
 
-function getContextData(args: RouteArgsMetadata, ctx: RouterContext<string>) {
+function getContextData(
+  args: RouteArgsMetadata,
+  ctx: RouterContext<string>,
+  next: Next
+) {
   const { paramtype, data } = args;
+  const req = ctx.request;
+  const res = ctx.response;
 
   switch (paramtype) {
-    case RouteParamtypes.REQUEST:
-      return ctx.request;
-    case RouteParamtypes.RESPONSE:
-      return ctx.response;
-    case RouteParamtypes.QUERY:
+    case RouteParamtypes.REQUEST: {
+      return req;
+    }
+    case RouteParamtypes.RESPONSE: {
+      return res;
+    }
+    case RouteParamtypes.NEXT: {
+      return next;
+    }
+    case RouteParamtypes.QUERY: {
       const query = helpers.getQuery(ctx);
       return data ? query[data.toString()] : query;
-    case RouteParamtypes.PARAM:
+    }
+    case RouteParamtypes.PARAM: {
       const params = ctx.params;
       return data ? params[data.toString()] : params;
-    case RouteParamtypes.BODY:
-      const body = ctx.request.body();
+    }
+    case RouteParamtypes.BODY: {
+      const body = req.body();
       return body.value;
-    case RouteParamtypes.HEADERS:
-      const header: Headers = ctx.request.headers;
+    }
+    case RouteParamtypes.HEADERS: {
+      const header: Headers = req.headers;
       return data ? header.get(data.toString()) : Object.fromEntries(header);
+    }
+    case RouteParamtypes.IP: {
+      return req.ip;
+    }
     default:
       return;
   }
