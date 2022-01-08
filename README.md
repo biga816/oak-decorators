@@ -100,8 +100,37 @@ export class SampleController {
 
 ```
 
-#### Request object
-
 The `@Get()` HTTP request method decorator before the `findAll()` method tells the application to create a handler for a specific endpoint for HTTP requests.
 
 For http methods, you can use `@Get()`, `@Post()`, `@Put()`, `@Patch()`, `@Delete()`.
+
+#### Request object
+
+Handlers often need access to the client request details.  
+HHere's a example to access the request object using `@Req()` decorator.
+
+```typescript
+import { Controller, Get, Req } from "https://deno.land/x/oak_decorators/mod.ts";
+
+@Controller('sample')
+export class SampleController {
+  @Get()
+  findAll(@Req() request: Request): string {
+    return 'OK';
+  }
+}
+
+```
+
+Below is a list of the provided decorators.
+
+|name|description|
+|:-|:-|
+| `@Request()` | `req` |
+| `@Response()` | `res` |
+| `@Next()` | `next` |
+| `@Query(key?: string)` | `req.query` / `req.query[key]` |
+| `@Param(key?: string)` | `req.params` / `req.params[key]` |
+| `@Body(key?: string)` | `req.body` / `req.body[key]` |
+| `@Headers(name?: string)` | `req.headers` / `req.headers[name]` |
+| `@Ip()` | `req.ip` |
