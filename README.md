@@ -124,13 +124,13 @@ export class SampleController {
 
 Below is a list of the provided decorators.
 
-|name|description|
-|:-|:-|
-| `@Request()` | `req` |
-| `@Response()` | `res` |
-| `@Next()` | `next` |
-| `@Query(key?: string)` | `req.query` / `req.query[key]` |
-| `@Param(key?: string)` | `req.params` / `req.params[key]` |
-| `@Body(key?: string)` | `req.body` / `req.body[key]` |
-| `@Headers(name?: string)` | `req.headers` / `req.headers[name]` |
-| `@Ip()` | `req.ip` |
+|name|
+|:-|
+| `@Request()`
+| `@Response()`
+| `@Next()`
+| `@Query(key?: string)`
+| `@Param(key?: string)`
+| `@Body(key?: string)`
+| `@Headers(name?: string)`
+| `@Ip()`
