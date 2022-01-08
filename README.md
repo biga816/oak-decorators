@@ -1,6 +1,6 @@
 # oak decorators
 
-Project implements decorators for oak like Nest.js.
+Project implements decorators like implementation of [Nest.js](https://nestjs.com/) for [oak](https://github.com/oakserver/oak).
 
 ## Usage
 
