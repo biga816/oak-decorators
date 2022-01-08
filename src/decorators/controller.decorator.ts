@@ -63,7 +63,7 @@ export function Controller<T extends { new (...instance: any[]): Object }>(
     };
 }
 
-function getContextData(
+async function getContextData(
   args: RouteArgsMetadata,
   ctx: RouterContext<string>,
   next: Next
@@ -91,8 +91,8 @@ function getContextData(
       return data ? params[data.toString()] : params;
     }
     case RouteParamtypes.BODY: {
-      const body = req.body();
-      return body.value;
+      const value = await req.body().value;
+      return data ? value[data.toString()] : value;
     }
     case RouteParamtypes.HEADERS: {
       const header: Headers = req.headers;
