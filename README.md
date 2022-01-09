@@ -134,3 +134,49 @@ Below is a list of the provided decorators.
 | `@Body(key?: string)`
 | `@Headers(name?: string)`
 | `@Ip()`
+
+### Providers
+
+Providers are responsible for main business logic as services, repositories, factories, helpers, and so on.  
+The main idea of a provider is that it can be injected as dependency.
+
+```typescript
+// ./sample.service.ts
+import { Injectable } from "https://deno.land/x/oak_decorators/mod.ts";
+
+@Injectable()
+export class SampleService {
+  get() {
+    return { status: "ok" };
+  }
+}
+```
+
+```typescript
+// ./sample.controller.ts
+import { Controller, Get } from "https://deno.land/x/oak_decorators/mod.ts";
+import { SampleService } from "./sample.service.ts";
+
+@Controller('sample')
+export class SampleController {
+  constructor(private readonly sampleService: SampleService) {}
+
+  @Get()
+  get() {
+    return this.sampleService.get();
+  }
+}
+```
+
+```typescript
+// ./sample.module.ts
+import { Module } from "https://deno.land/x/oak_decorators/mod.ts";
+import { SampleController } from "./sample.controller.ts";
+import { SampleService } from "./sample.service.ts";
+
+@Module({
+  controllers: [SampleController],
+  providers: [SampleService],
+})
+export class SampleModule {}
+```
