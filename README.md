@@ -115,7 +115,7 @@ import { Controller, Get, Req } from "https://deno.land/x/oak_decorators/mod.ts"
 @Controller('sample')
 export class SampleController {
   @Get()
-  findAll(@Req() request: Request): string {
+  findAll(@Request() request: Request): string {
     return 'OK';
   }
 }
