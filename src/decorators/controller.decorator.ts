@@ -19,10 +19,8 @@ export function Controller<T extends { new (...instance: any[]): Object }>(
         const prefix = routePrefix ? `/${routePrefix}` : "";
         this._path = prefix + (path ? `/${path}` : "");
         const route = new Router();
-        const list: ActionMetadata[] = Reflect.getMetadata(
-          METHOD_METADATA,
-          fn.prototype
-        );
+        const list: ActionMetadata[] =
+          Reflect.getMetadata(METHOD_METADATA, fn.prototype) || [];
 
         list.forEach((meta) => {
           const argsMetadataList: RouteArgsMetadata[] =
