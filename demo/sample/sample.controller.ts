@@ -10,13 +10,13 @@ export class SampleController {
     return this.sampleService.get();
   }
 
-  // @Post()
-  // post(@Body() body: any) {
-  //   return body;
-  // }
+  @Post()
+  post(@Body() body: any) {
+    return body;
+  }
 
-  // @Get("test/:id")
-  // test(@Param("id") id: string, @Query() test: any, @IP() ip: string) {
-  //   return { id, ...test, ip };
-  // }
+  @Get("test/:id")
+  test(@Param("id") id: string, @Query() test: any, @IP() ip: string) {
+    return { id, ...test, ip };
+  }
 }
