@@ -8,7 +8,7 @@ import {
 export { Application, Router, helpers };
 export type { RouterContext };
 
-export { Reflect } from "https://deno.land/x/reflect_metadata@v0.1.12-2/mod.ts";
+export { Reflect } from "https://deno.land/x/deno_reflect@v0.2.1/mod.ts";
 
 export {
   bootstrap,
