@@ -38,7 +38,7 @@ export function Controller<T extends { new (...instance: any[]): Object }>(
                   .sort((a, b) => a.index - b.index)
                   .map(async (data) => getContextData(data, context, next))
               );
-              context.response.body = (this as any)[meta.functionName](
+              context.response.body = await (this as any)[meta.functionName](
                 ...inputs
               );
             }
