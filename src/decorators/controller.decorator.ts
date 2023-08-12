@@ -3,7 +3,11 @@ import { Reflect, Router, RouterContext, helpers } from '../deps.ts';
 
 import { ActionMetadata, RouteArgsMetadata } from '../interfaces/mod.ts';
 import { RouteParamtypes } from '../enums/mod.ts';
-import { METHOD_METADATA, ROUTE_ARGS_METADATA } from '../const.ts';
+import {
+  METHOD_METADATA,
+  MIDDLEWARE_METADATA,
+  ROUTE_ARGS_METADATA,
+} from '../const.ts';
 
 type Next = () => Promise<unknown>;
 
@@ -30,8 +34,20 @@ export function Controller<T extends { new (...instance: any[]): Object }>(
               meta.functionName
             ) || [];
 
+          const middlewaresMetadata = Reflect.getMetadata(
+            MIDDLEWARE_METADATA,
+            fn.prototype,
+            meta.functionName
+          );
+          const middlewares = Array.isArray(middlewaresMetadata)
+            ? middlewaresMetadata
+            : middlewaresMetadata
+            ? [middlewaresMetadata]
+            : [];
+
           (route as any)[meta.method](
             `/${meta.path}`,
+            ...middlewares,
             async (context: RouterContext<string>, next: Next) => {
               const inputs = await Promise.all(
                 argsMetadataList
