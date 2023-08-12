@@ -1,5 +1,6 @@
 export enum RouteParamtypes {
   REQUEST,
+  CONTEXT,
   RESPONSE,
   NEXT,
   BODY,

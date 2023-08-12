@@ -1,9 +1,9 @@
 // deno-lint-ignore-file no-explicit-any
-import { Reflect, Router, RouterContext, helpers } from "../deps.ts";
+import { Reflect, Router, RouterContext, helpers } from '../deps.ts';
 
-import { ActionMetadata, RouteArgsMetadata } from "../interfaces/mod.ts";
-import { RouteParamtypes } from "../enums/mod.ts";
-import { METHOD_METADATA, ROUTE_ARGS_METADATA } from "../const.ts";
+import { ActionMetadata, RouteArgsMetadata } from '../interfaces/mod.ts';
+import { RouteParamtypes } from '../enums/mod.ts';
+import { METHOD_METADATA, ROUTE_ARGS_METADATA } from '../const.ts';
 
 type Next = () => Promise<unknown>;
 
@@ -16,8 +16,8 @@ export function Controller<T extends { new (...instance: any[]): Object }>(
       private _route?: Router;
 
       init(routePrefix?: string) {
-        const prefix = routePrefix ? `/${routePrefix}` : "";
-        this._path = prefix + (path ? `/${path}` : "");
+        const prefix = routePrefix ? `/${routePrefix}` : '';
+        this._path = prefix + (path ? `/${path}` : '');
         const route = new Router();
         const list: ActionMetadata[] =
           Reflect.getMetadata(METHOD_METADATA, fn.prototype) || [];
@@ -44,7 +44,7 @@ export function Controller<T extends { new (...instance: any[]): Object }>(
             }
           );
 
-          const fullPath = this.path + (meta.path ? `/${meta.path}` : "");
+          const fullPath = this.path + (meta.path ? `/${meta.path}` : '');
           console.log(`Mapped: [${meta.method.toUpperCase()}]${fullPath}`);
         });
 
@@ -71,6 +71,9 @@ async function getContextData(
   const res = ctx.response;
 
   switch (paramtype) {
+    case RouteParamtypes.CONTEXT: {
+      return ctx;
+    }
     case RouteParamtypes.REQUEST: {
       return req;
     }
