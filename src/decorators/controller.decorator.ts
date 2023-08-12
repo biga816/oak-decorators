@@ -38,9 +38,14 @@ export function Controller<T extends { new (...instance: any[]): Object }>(
                   .sort((a, b) => a.index - b.index)
                   .map(async (data) => getContextData(data, context, next))
               );
-              context.response.body = await (this as any)[meta.functionName](
-                ...inputs
-              );
+              const result = await (this as any)[meta.functionName](...inputs);
+              if (result === undefined) return;
+
+              if (context.response.writable) {
+                context.response.body = result;
+              } else {
+                console.warn(`Response is not writable`);
+              }
             }
           );
 
