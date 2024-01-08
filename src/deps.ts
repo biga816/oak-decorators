@@ -3,7 +3,7 @@ import {
   Router,
   RouterContext,
   helpers,
-} from "https://deno.land/x/oak@v10.1.0/mod.ts";
+} from "https://deno.land/x/oak@12.6.1/mod.ts";
 
 export { Application, Router, helpers };
 export type { RouterContext };
