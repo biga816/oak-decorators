@@ -54,7 +54,7 @@ export const assignModule = (module: any) => {
  */
 export const registerMiddlewareMethodDecorator = (
   target: any,
-  methodName: Function,
+  methodName: string,
   handler: (ctx: RouterContext, next: Next) => void
 ) => {
   const middleware =
