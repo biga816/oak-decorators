@@ -1,13 +1,13 @@
 // deno-lint-ignore-file no-explicit-any
-import { Reflect, Router, RouterContext, helpers } from '../deps.ts';
-
-import { ActionMetadata, RouteArgsMetadata } from '../interfaces/mod.ts';
-import { RouteParamtypes } from '../enums/mod.ts';
+import { Reflect, Router, RouterContext, helpers } from "../deps.ts";
+import logger from "../utils/logger.ts";
+import { ActionMetadata, RouteArgsMetadata } from "../interfaces/mod.ts";
+import { RouteParamtypes } from "../enums/mod.ts";
 import {
   METHOD_METADATA,
   MIDDLEWARE_METADATA,
   ROUTE_ARGS_METADATA,
-} from '../const.ts';
+} from "../const.ts";
 
 type Next = () => Promise<unknown>;
 
@@ -20,8 +20,8 @@ export function Controller<T extends { new (...instance: any[]): Object }>(
       private _route?: Router;
 
       init(routePrefix?: string) {
-        const prefix = routePrefix ? `/${routePrefix}` : '';
-        this._path = prefix + (path ? `/${path}` : '');
+        const prefix = routePrefix ? `/${routePrefix}` : "";
+        this._path = prefix + (path ? `/${path}` : "");
         const route = new Router();
         const list: ActionMetadata[] =
           Reflect.getMetadata(METHOD_METADATA, fn.prototype) || [];
@@ -60,13 +60,13 @@ export function Controller<T extends { new (...instance: any[]): Object }>(
               if (context.response.writable) {
                 context.response.body = result;
               } else {
-                console.warn(`Response is not writable`);
+                logger.warn(`Response is not writable`);
               }
             }
           );
 
-          const fullPath = this.path + (meta.path ? `/${meta.path}` : '');
-          console.log(`Mapped: [${meta.method.toUpperCase()}]${fullPath}`);
+          const fullPath = this.path + (meta.path ? `/${meta.path}` : "");
+          logger.info(`Mapped: [${meta.method.toUpperCase()}]${fullPath}`);
         });
 
         this._route = route;
