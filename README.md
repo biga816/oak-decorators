@@ -299,17 +299,23 @@ It would be useful to have a shortcut to some data stored in the request's JWT.
 
 The approach would involve having a high priority controller that parses the JWT and stores it in `context.state.jwtData`.
 
-Then a param decorator could be defined as follows: 
+Then a param decorator could be defined as follows:
 
 ```typescript
-export function JWT(propName? : string) {
-  return function(targetClass: any, methodName: string, paramIndex: number) {
-    const handler = (ctx : Context) => 
+export function JWT(propName?: string) {
+  return function (targetClass: any, methodName: string, paramIndex: number) {
+    const handler = (ctx: Context) =>
       propName ? ctx.state.jwtData?.[propName] : ctx.state.jwtData;
-    registerCustomRouteParamDecorator(targetClass, methodName, paramIndex)(handler);
-  }
+    registerCustomRouteParamDecorator(
+      targetClass,
+      methodName,
+      paramIndex
+    )(handler);
+  };
 }
 ```
+
+And used in controllers like this:
 
 ```typescript
 //sample-controller
@@ -318,5 +324,31 @@ export function JWT(propName? : string) {
 getUserSubscriptions(@JWT('sub') userId : string) {
   return await databaseService.getUserSubscriptions(userId);
 }
+```
 
+Params resolution is asynchronous, so it is also possible to do things like retrieving session information from KV stores on demand. This would be a more efficient strategy than having a middleware that always retrieves session data if this is not desirable.
+
+```typescript
+export function SessionData() {
+  return function (targetClass: any, methodName: string, paramIndex: number) {
+    const handler = (ctx: Context) =>
+      ctx.state.jwtData?.sid
+        ? await retrieveSession(ctx.state.jwtData?.sid)
+        : null;
+    registerCustomRouteParamDecorator(
+      targetClass,
+      methodName,
+      paramIndex
+    )(handler);
+  };
+}
+```
+
+```typescript
+//sample-controller
+
+@Get('my-recent-products')
+getUserSubscriptions(@SessionData() sessionData : any) {
+  return sessionData.recentProducts
+}
 ```
