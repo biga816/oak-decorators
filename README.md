@@ -9,6 +9,7 @@ NestJS-style decorators library for Deno's [oak](https://github.com/oakserver/oa
 - **Decorators**: Configure route endpoint methods in a declarative style.
 - **Controller Support**: Define your routes in a declarative way using controllers.
 - **Custom Middleware Support**: Create middleware decorators to control access and flow to routes
+- **Custom Middleware Params Support**: Create endpoint parameters decorators for parameter injection
 
 ## Important
 
@@ -288,4 +289,34 @@ export default class SampleController {
     // Logic to get all users
   }
 }
+```
+
+### Custom endpoint parameters decorator
+
+It's also possible to register custom parameters decorators to streamline data injection into endpoint handlers
+
+It would be useful to have a shortcut to some data stored in the request's JWT.
+
+The approach would involve having a high priority controller that parses the JWT and stores it in `context.state.jwtData`.
+
+Then a param decorator could be defined as follows: 
+
+```typescript
+export function JWT(propName? : string) {
+  return function(targetClass: any, methodName: string, paramIndex: number) {
+    const handler = (ctx : Context) => 
+      propName ? ctx.state.jwtData?.[propName] : ctx.state.jwtData;
+    registerCustomRouteParamDecorator(targetClass, methodName, paramIndex)(handler);
+  }
+}
+```
+
+```typescript
+//sample-controller
+
+@Get('my-subscriptions')
+getUserSubscriptions(@JWT('sub') userId : string) {
+  return await databaseService.getUserSubscriptions(userId);
+}
+
 ```
