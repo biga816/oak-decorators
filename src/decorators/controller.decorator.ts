@@ -1,27 +1,39 @@
 // deno-lint-ignore-file no-explicit-any
-import { Reflect, Router, RouterContext, helpers } from "../deps.ts";
-import logger from "../utils/logger.ts";
-import { ActionMetadata, RouteArgsMetadata } from "../interfaces/mod.ts";
-import { RouteParamtypes } from "../enums/mod.ts";
+import { Reflect, Router, RouterContext, helpers } from '../deps.ts';
+import logger from '../utils/logger.ts';
+import { ActionMetadata, RouteArgsMetadata } from '../interfaces/mod.ts';
+import { RouteParamtypes } from '../enums/mod.ts';
 import {
   METHOD_METADATA,
   MIDDLEWARE_METADATA,
   ROUTE_ARGS_METADATA,
-} from "../const.ts";
+  CONTROLLER_METADATA,
+} from '../const.ts';
 
 type Next = () => Promise<unknown>;
 
 export function Controller<T extends { new (...instance: any[]): Object }>(
-  path?: string
+  options?:
+    | string
+    | {
+        path?: string;
+        injectables: string[];
+      }
 ) {
-  return (fn: T): any =>
-    class extends fn {
+  const path: string | undefined =
+    typeof options === 'string' ? options : options?.path;
+  const injectables: string[] | undefined =
+    typeof options === 'string' ? [] : options?.injectables || [];
+
+  return (fn: T): any => {
+    Reflect.defineMetadata(CONTROLLER_METADATA, { injectables }, fn);
+    return class extends fn {
       private _path?: string;
       private _route?: Router;
 
       init(routePrefix?: string) {
-        const prefix = routePrefix ? `/${routePrefix}` : "";
-        this._path = prefix + (path ? `/${path}` : "");
+        const prefix = routePrefix ? `/${routePrefix}` : '';
+        this._path = prefix + (path ? `/${path}` : '');
         const route = new Router();
         const list: ActionMetadata[] =
           Reflect.getMetadata(METHOD_METADATA, fn.prototype) || [];
@@ -65,7 +77,7 @@ export function Controller<T extends { new (...instance: any[]): Object }>(
             }
           );
 
-          const fullPath = this.path + (meta.path ? `/${meta.path}` : "");
+          const fullPath = this.path + (meta.path ? `/${meta.path}` : '');
           logger.info(`Mapped: [${meta.method.toUpperCase()}]${fullPath}`);
         });
 
@@ -80,6 +92,7 @@ export function Controller<T extends { new (...instance: any[]): Object }>(
         return this._route;
       }
     };
+  };
 }
 
 async function getContextData(
