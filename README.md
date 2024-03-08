@@ -1,16 +1,83 @@
-# oak decorators
+# Oak Decorators
 
-Project implements decorators like implementation of [Nest.js](https://nestjs.com/) for Deno's web framework [oak](https://github.com/oakserver/oak).
+NestJS-style decorators library for Deno's [oak](https://github.com/oakserver/oak).
+
+## TL;DR Key features:
+
+- **Dependency Injection**: Simplify your code and testing process by injecting dependencies.
+- **Modular Structure**: Organize your code into modules for better scalability and maintainability.
+- **Decorators**: Configure route endpoint methods in a declarative style.
+- **Controller Support**: Define your routes in a declarative way using controllers.
+- **Custom Middleware Support**: Create middleware decorators to control access and flow to routes
+- **Custom Middleware Params Support**: Create endpoint parameters decorators for parameter injection
+
+## Important
+
+Due to the incompatibility of reflect_metadata exports in Deno, in order for this library to work it's important to add the deno_reflect drop-in replacement in your project's scopes like this:
+
+```jsonc
+// deno.json
+{
+  //...
+  "scopes": {
+    "https://deno.land/x/": {
+      "https://deno.land/x/reflect_metadata@v0.1.12-2/mod.ts": "https://deno.land/x/deno_reflect@v0.2.1/mod.ts"
+    }
+  }
+  //...
+}
+```
+
+For more info [check this issue](https://github.com/denoland/deno/issues/15197)
 
 ## Usage
 
-The following are the core files that need to be created in the first step.
+Define controllers to handle HTTP endpoints
+
+```typescript
+// ./controllers/util-controller.ts
+import {
+  Controller,
+  Get,
+  Headers,
+} from 'https://deno.land/x/oak_decorators/mod.ts';
+
+@Controller('util')
+export class UtilController {
+  @Get('user-agent')
+  bounceUserAgent(@Headers('user-agent') userAgent: string) {
+    return { status: 'ok', userAgent };
+  }
+
+  @Get('multiply')
+  getRandomStuff(@Query('f1') factor1: number, @Query('f2') factor2: number) {
+    return { status: 'ok', result: factor1 * factor2 };
+  }
+}
+```
+
+Define modules
+
+```typescript
+// ./app.module.ts
+import { Module } from 'https://deno.land/x/oak_decorators/mod.ts';
+import { UtilController } from './app.controller.ts';
+
+@Module({
+  controllers: [UtilController],
+  routePrefix: 'api/v1',
+  modules: [], //optional submodules
+})
+export class AppModule {}
+```
+
+Register an app module with oak.
 
 ```typescript
 // ./main.ts
-import { Application } from "https://deno.land/x/oak/mod.ts";
-import { assignModule } from "https://deno.land/x/oak_decorators/mod.ts";
-import { AppModule } from "./app.module.ts";
+import { Application } from 'https://deno.land/x/oak/mod.ts';
+import { assignModule } from 'https://deno.land/x/oak_decorators/mod.ts';
+import { AppModule } from './app.module.ts';
 
 const app = new Application();
 app.use(assignModule(AppModule));
@@ -18,38 +85,10 @@ app.use(assignModule(AppModule));
 await app.listen({ port: 8000 });
 ```
 
-```typescript
-// ./app.module.ts
-import { Module } from "https://deno.land/x/oak_decorators/mod.ts";
-import { AppController } from "./app.controller.ts";
+Run your app and following endpoints will be available:
 
-@Module({
-  controllers: [AppController],
-  routePrefix: "v1",
-})
-export class AppModule {}
-```
-
-```typescript
-// ./app.controller.ts
-import { Controller, Get, Headers } from "https://deno.land/x/oak_decorators/mod.ts";
-
-@Controller()
-export class AppController {
-  @Get()
-  get(@Headers("user-agent") userAgent: string) {
-    return { status: "ok", userAgent };
-  }
-}
-```
-
-Here's a brief overview of those core files:
-
-| name | description |
-|:-|:-|
-| `app.module.ts` | The root module of the application. |
-| `app.controller.ts` | A basic controller with a single route. |
-| `main.ts` | The entry file of the application which uses the core middleware assignModule to use decorations. |
+- `/api/v1/util/user-agent`
+- `/api/v1/util/multiply?f1=2&f2=4`
 
 ## Docs
 
@@ -60,22 +99,22 @@ Each application has at least one module, a root module, and each modules can ha
 
 The `@Module()` decorator takes those options:
 
-|name|description|
-|:-|:-|
+| name          | description                                                                 |
+| :------------ | :-------------------------------------------------------------------------- |
 | `controllers` | the set of controllers defined in this module which have to be instantiated |
-| `providers` | the providers that will be instantiated by the injector |
-| `modules` | the set of modules defined as child modules of this module |
-| `routePrefix` | the prefix name to be set in route as the common ULR for controllers. |
+| `providers`   | the providers that will be instantiated by the injector                     |
+| `modules`     | the set of modules defined as child modules of this module                  |
+| `routePrefix` | the prefix name to be set in route as the common ULR for controllers.       |
 
 ```typescript
-import { Module } from "https://deno.land/x/oak_decorators/mod.ts";
-import { AppController } from "./app.controller.ts";
-import { SampleModule } from "./sample/sample.module.ts";
+import { Module } from 'https://deno.land/x/oak_decorators/mod.ts';
+import { AppController } from './app.controller.ts';
+import { SampleModule } from './sample/sample.module.ts';
 
 @Module({
   modules: [SampleModule],
   controllers: [AppController],
-  routePrefix: "v1",
+  routePrefix: 'v1',
 })
 export class AppModule {}
 ```
@@ -88,21 +127,20 @@ A controller is a class annotated with a `@Controller()` decorator. Controllers 
 The `@Controller()` decorator take a route path prefix optionally.
 
 ```typescript
-import { Controller, Get } from "https://deno.land/x/oak_decorators/mod.ts";
+import { Controller, Get } from 'https://deno.land/x/oak_decorators/mod.ts';
 
 @Controller('sample')
-export class SampleController {
+export class UsersController {
   @Get()
   findAll(): string {
     return 'OK';
   }
 }
-
 ```
 
 The `@Get()` HTTP request method decorator before the `findAll()` method tells the application to create a handler for a specific endpoint for HTTP requests.
 
-For http methods, you can use `@Get()`, `@Post()`, `@Put()`, `@Patch()`, `@Delete()`.
+For http methods, you can use `@Get()`, `@Post()`, `@Put()`, `@Patch()`, `@Delete()`, `@All()`.
 
 #### Request object
 
@@ -110,7 +148,11 @@ Handlers often need access to the client request details.
 HHere's a example to access the request object using `@Req()` decorator.
 
 ```typescript
-import { Controller, Get, Req } from "https://deno.land/x/oak_decorators/mod.ts";
+import {
+  Controller,
+  Get,
+  Request,
+} from 'https://deno.land/x/oak_decorators/mod.ts';
 
 @Controller('sample')
 export class SampleController {
@@ -119,13 +161,13 @@ export class SampleController {
     return 'OK';
   }
 }
-
 ```
 
 Below is a list of the provided decorators.
 
-|name|
-|:-|
+| name |
+| :--- |
+
 | `@Request()`
 | `@Response()`
 | `@Next()`
@@ -134,49 +176,179 @@ Below is a list of the provided decorators.
 | `@Body(key?: string)`
 | `@Headers(name?: string)`
 | `@Ip()`
+| `@Context()`
 
 ### Providers
 
 Providers are responsible for main business logic as services, repositories, factories, helpers, and so on.  
-The main idea of a provider is that it can be injected as dependency.
+The main idea of a provider is that it can be injected as a dependency. Depending on the environment, different implementations of a service can be provided.
 
 ```typescript
 // ./sample.service.ts
-import { Injectable } from "https://deno.land/x/oak_decorators/mod.ts";
+import { Injectable } from 'https://deno.land/x/oak_decorators/mod.ts';
+import db from './db-service.ts';
 
 @Injectable()
-export class SampleService {
-  get() {
-    return { status: "ok" };
+export class UserService {
+  async getAllUsers() {
+    const { error, data: users } = await db.users.getAll();
+    return { status: 'ok', data: users };
   }
 }
+
+@Injectable()
+export class MockUserService {
+  getAllUsers() {
+    return {
+      status: 'ok',
+      data: [
+        {
+          name: 'John Doe',
+        },
+        {
+          name: 'Jane Doe',
+        },
+      ],
+    };
+  }
+}
+
+// ./sample.controller.ts
+import { Controller, Get } from 'https://deno.land/x/oak_decorators/mod.ts';
+import { UserService } from './sample.service.ts';
+
+@Controller('users')
+export class UsersController {
+  constructor(private readonly userService: UserService) {}
+
+  @Get()
+  getAllUsers() {
+    return await this.userService.getAllUsers();
+  }
+}
+
+// ./sample.module.ts
+import { Module } from 'https://deno.land/x/oak_decorators/mod.ts';
+import { UsersController } from './sample.controller.ts';
+import { UserService, MockUserService } from './sample.service.ts';
+
+@Module({
+  controllers: [UsersController],
+  providers: [
+    Deno.env.get('DENO_ENV') === 'production' ? UserService : MockUserService,
+  ],
+})
+export class SampleModule {}
 ```
+
+### Custom Middleware Decorators
+
+It's possible to register middleware that can be used in controllers by means of decorators.
+
+For instance, to protect routes based on user roles, you can create a `@RequiresRole` middleware decorator.
+
+```typescript
+// ./middleware.ts
+import { registerMiddlewareMethodDecorator } from 'https://deno.land/x/oak_decorators/mod.ts';
+import { Context } from 'https://deno.land/x/oak/mod.ts';
+
+function checkUserRoles(context: Context, roles: string[]) {
+  // Logic to check the user role
+  return false;
+}
+
+export function RequiresRole(roles: string[]) {
+  return function (target, methodName) {
+    const requiresRole = async (context, next) => {
+      // Logic to check the user session or JWT for the required role
+      if (checkUserRoles(context, roles)) {
+        await next();
+      } else {
+        // handle unauthorized access
+        context.response.status = 401;
+        context.response.body = { error: 'Unauthorized' };
+        return;
+      }
+    };
+    registerMiddlewareMethodDecorator(target, methodName, requiresRole);
+  };
+}
+```
+
+Then you can use the `@RequiresRole` decorator in your controllers's methods.
 
 ```typescript
 // ./sample.controller.ts
-import { Controller, Get } from "https://deno.land/x/oak_decorators/mod.ts";
-import { SampleService } from "./sample.service.ts";
+import RequireRole from './middleware.ts';
 
-@Controller('sample')
-export class SampleController {
-  constructor(private readonly sampleService: SampleService) {}
-
-  @Get()
-  get() {
-    return this.sampleService.get();
+@Controller('users')
+export default class SampleController {
+  @Get('/')
+  @RequiresRole(['admin'])
+  getAllUsers() {
+    // Logic to get all users
   }
 }
 ```
 
-```typescript
-// ./sample.module.ts
-import { Module } from "https://deno.land/x/oak_decorators/mod.ts";
-import { SampleController } from "./sample.controller.ts";
-import { SampleService } from "./sample.service.ts";
+### Custom endpoint parameters decorator
 
-@Module({
-  controllers: [SampleController],
-  providers: [SampleService],
-})
-export class SampleModule {}
+It's also possible to register custom parameters decorators to streamline data injection into endpoint handlers
+
+It would be useful to have a shortcut to some data stored in the request's JWT.
+
+The approach would involve having a high priority controller that parses the JWT and stores it in `context.state.jwtData`.
+
+Then a param decorator could be defined as follows:
+
+```typescript
+export function JWT(propName?: string) {
+  return function (targetClass: any, methodName: string, paramIndex: number) {
+    const handler = (ctx: Context) =>
+      propName ? ctx.state.jwtData?.[propName] : ctx.state.jwtData;
+    registerCustomRouteParamDecorator(
+      targetClass,
+      methodName,
+      paramIndex
+    )(handler);
+  };
+}
+```
+
+And used in controllers like this:
+
+```typescript
+//sample-controller
+
+@Get('my-subscriptions')
+getUserSubscriptions(@JWT('sub') userId : string) {
+  return await databaseService.getUserSubscriptions(userId);
+}
+```
+
+Params resolution is asynchronous, so it is also possible to do things like retrieving session information from KV stores on demand. This would be a more efficient strategy than having a middleware that always retrieves session data if this is not desirable.
+
+```typescript
+export function SessionData() {
+  return function (targetClass: any, methodName: string, paramIndex: number) {
+    const handler = (ctx: Context) =>
+      ctx.state.jwtData?.sid
+        ? await retrieveSession(ctx.state.jwtData?.sid)
+        : null;
+    registerCustomRouteParamDecorator(
+      targetClass,
+      methodName,
+      paramIndex
+    )(handler);
+  };
+}
+```
+
+```typescript
+//sample-controller
+
+@Get('my-recent-products')
+getUserSubscriptions(@SessionData() sessionData : any) {
+  return sessionData.recentProducts
+}
 ```

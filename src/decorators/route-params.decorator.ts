@@ -1,12 +1,8 @@
+import { ROUTE_ARGS_METADATA } from "../const.ts";
 import { Reflect } from "../deps.ts";
 import { RouteParamtypes } from "../enums/mod.ts";
-import { ROUTE_ARGS_METADATA } from "../const.ts";
-import { RouteArgsMetadata, ParamData } from "../interfaces/mod.ts";
-
-const isUndefined = (obj: any): obj is undefined => typeof obj === "undefined";
-const isString = (fn: any): fn is string => typeof fn === "string";
-const isNil = (obj: any): obj is null | undefined =>
-  isUndefined(obj) || obj === null;
+import { ParamData, RouteArgsMetadata } from "../interfaces/mod.ts";
+import { isNil, isString } from "../utils/router.util.ts";
 
 function createPipesRouteParamDecorator(paramtype: RouteParamtypes) {
   return (data?: ParamData): ParameterDecorator =>
@@ -28,6 +24,10 @@ function createPipesRouteParamDecorator(paramtype: RouteParamtypes) {
 
 export function Request(property?: string): ParameterDecorator {
   return createPipesRouteParamDecorator(RouteParamtypes.REQUEST)(property);
+}
+
+export function Context(property?: string): ParameterDecorator {
+  return createPipesRouteParamDecorator(RouteParamtypes.CONTEXT)(property);
 }
 
 export function Response(property?: string): ParameterDecorator {

@@ -1,5 +1,6 @@
 export enum RouteParamtypes {
   REQUEST,
+  CONTEXT,
   RESPONSE,
   NEXT,
   BODY,
@@ -11,4 +12,5 @@ export enum RouteParamtypes {
   FILES,
   HOST,
   IP,
+  CUSTOM,
 }
