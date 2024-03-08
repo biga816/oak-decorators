@@ -17,12 +17,12 @@ export function Controller<T extends { new (...instance: any[]): Object }>(
     | string
     | {
         path?: string;
-        injectables: string[];
+        injectables: Array<string | symbol | null>;
       }
 ) {
   const path: string | undefined =
     typeof options === 'string' ? options : options?.path;
-  const injectables: string[] | undefined =
+  const injectables =
     typeof options === 'string' ? [] : options?.injectables || [];
 
   return (fn: T): any => {

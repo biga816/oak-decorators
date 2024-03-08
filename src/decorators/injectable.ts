@@ -8,7 +8,7 @@ export function Injectable({
   implementing = [],
   ...originalOptions
 }: {
-  implementing?: string | string[];
+  implementing?: string | symbol | string[] | symbol[];
 } & InjectionOptions = {}): ClassDecorator {
   const implementings = Array.isArray(implementing)
     ? implementing
