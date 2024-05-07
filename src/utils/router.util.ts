@@ -1,22 +1,24 @@
-import { Reflect, Router, bootstrap } from '../deps.ts';
+import { Next, Reflect, Router, RouterContext } from "../deps.ts";
+import { bootstrap } from "../mod.ts";
 
 import {
+  CONTROLLER_METADATA,
   INJECTOR_INTERFACES_METADATA,
   MIDDLEWARE_METADATA,
   MODULE_METADATA,
-} from '../const.ts';
-import { CreateRouterOption } from '../interfaces/mod.ts';
-import { RouterContext, Next } from 'oak';
-import { ParamData } from '../interfaces/mod.ts';
-import { RouteArgsMetadata } from '../interfaces/mod.ts';
-import { ROUTE_ARGS_METADATA } from '../const.ts';
-import { RouteParamtypes } from '../enums/mod.ts';
-import { ClassConstructor } from '../types.ts';
-import { CONTROLLER_METADATA } from '../const.ts';
+  ROUTE_ARGS_METADATA,
+} from "../const.ts";
+import { RouteParamtypes } from "../enums/mod.ts";
+import {
+  CreateRouterOption,
+  ParamData,
+  RouteArgsMetadata,
+} from "../interfaces/mod.ts";
+import { ClassConstructor } from "../types.ts";
 
 export const isUndefined = (obj: any): obj is undefined =>
-  typeof obj === 'undefined';
-export const isString = (fn: any): fn is string => typeof fn === 'string';
+  typeof obj === "undefined";
+export const isString = (fn: any): fn is string => typeof fn === "string";
 export const isNil = (obj: any): obj is null | undefined =>
   isUndefined(obj) || obj === null;
 
@@ -28,7 +30,7 @@ const createRouter = (
   controllers.forEach((Controller) => {
     const requiredProviders = (
       Reflect.getMetadata(
-        'design:paramtypes',
+        "design:paramtypes",
         Object.getPrototypeOf(Controller)
       ) || []
     ).map((requiredProvider: ClassConstructor, idx: number) => {
@@ -39,12 +41,13 @@ const createRouter = (
       const provider = providers.find((provider) => {
         const implementing =
           Reflect.getMetadata(INJECTOR_INTERFACES_METADATA, provider) || [];
-          return (
-            provider === requiredProvider ||
+        return (
+          provider === requiredProvider ||
           Object.prototype.isPrototypeOf.call(
             provider.prototype,
             requiredProvider.prototype
-          ) || implementing.includes(injectables[idx])
+          ) ||
+          implementing.includes(injectables[idx])
         );
       });
       if (!provider) {
@@ -57,11 +60,11 @@ const createRouter = (
       return provider;
     });
 
-    Reflect.defineMetadata('design:paramtypes', requiredProviders, Controller);
+    Reflect.defineMetadata("design:paramtypes", requiredProviders, Controller);
 
     const controller = bootstrap<any>(Controller);
     const prefixFull = prefix
-      ? prefix + (routePrefix ? `/${routePrefix}` : '')
+      ? prefix + (routePrefix ? `/${routePrefix}` : "")
       : routePrefix;
     controller.init(prefixFull);
     const path = controller.path;
@@ -103,7 +106,10 @@ export const assignModule = (module: any) => {
 export const registerMiddlewareMethodDecorator = (
   target: ClassConstructor,
   methodName: string,
-  handler: (ctx: RouterContext, next: Next) => void
+  handler: (
+    ctx: RouterContext<any, Record<string, any>, any>,
+    next: Next
+  ) => void
 ) => {
   const middleware =
     Reflect.getMetadata(MIDDLEWARE_METADATA, target, methodName) || [];

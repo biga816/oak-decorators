@@ -7,6 +7,7 @@ import { isNil, isString } from "../utils/router.util.ts";
 function createPipesRouteParamDecorator(paramtype: RouteParamtypes) {
   return (data?: ParamData): ParameterDecorator =>
     (target, key, index) => {
+      if (!key) return;
       const args: RouteArgsMetadata[] =
         Reflect.getMetadata(ROUTE_ARGS_METADATA, target, key) || [];
       const hasParamData = isNil(data) || isString(data);
