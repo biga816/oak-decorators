@@ -6,11 +6,11 @@ import {
   assertThrows,
 } from "https://deno.land/std@0.71.0/testing/asserts.ts";
 import {
+  bootstrap,
   Bootstrapped,
   Constructor,
   Injectable,
   Injector,
-  bootstrap,
 } from "./mod.ts";
 
 function assertInstanceOf<T>(value: T, type: Constructor<T>) {
@@ -90,17 +90,17 @@ class CycleDummy {}
 
 @Injectable()
 class CycleA {
-  constructor(dummy: CycleDummy) {}
+  constructor(_: CycleDummy) {}
 }
 
 @Injectable()
 class CycleB {
-  constructor(a: CycleA) {}
+  constructor(_: CycleA) {}
 }
 
 @Bootstrapped()
 class CycleMain {
-  constructor(b: CycleB) {}
+  constructor(_: CycleB) {}
 }
 
 Deno.test("bootstrap(), no overrides", () => {
@@ -183,7 +183,7 @@ Deno.test("bootstrap(), uninjectable main", () => {
   assertThrows(
     () => bootstrap(UninjectableMain),
     TypeError,
-    "Type String is not injectable"
+    "Type String is not injectable",
   );
 });
 
@@ -191,7 +191,7 @@ Deno.test("bootstrap(), uninjectable dependency", () => {
   assertThrows(
     () => bootstrap(UninjectableDependency),
     TypeError,
-    "Dependency Number of UninjectableTest is not injectable"
+    "Dependency Number of UninjectableTest is not injectable",
   );
 });
 
@@ -199,7 +199,7 @@ Deno.test("bootstrap(), dependency cycle", () => {
   assertThrows(
     () => bootstrap(CycleMain, new Map([[CycleDummy, CycleB]])),
     Error,
-    "Dependency cycle detected: Failed to resolve CycleB (-> CycleA), CycleA (-> CycleB)"
+    "Dependency cycle detected: Failed to resolve CycleB (-> CycleA), CycleA (-> CycleB)",
   );
 });
 

@@ -1,4 +1,4 @@
-import { ClassConstructor } from '../types.ts';
+import { ClassConstructor } from "../types.ts";
 
 export interface CreateRouterOption {
   controllers: ClassConstructor[];

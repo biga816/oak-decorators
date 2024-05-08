@@ -1,6 +1,7 @@
+import { Reflect } from "deno_reflect";
 import { assertExists } from "https://deno.land/std@0.122.0/testing/asserts.ts";
+import { Router } from "oak";
 import { MODULE_METADATA } from "../const.ts";
-import { Reflect, Router } from "../deps.ts";
 import { CreateRouterOption } from "../interfaces/mod.ts";
 
 import { assignModule } from "./router.util.ts";

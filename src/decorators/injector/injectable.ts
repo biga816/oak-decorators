@@ -1,4 +1,4 @@
-import { Reflect } from "../../deps.ts";
+import { Reflect } from "deno_reflect";
 
 import { INJECTOR_INTERFACES_METADATA } from "../../const.ts";
 import { setInjectionMetadata } from "./injector.ts";
@@ -21,7 +21,7 @@ export function Injectable<T>({
       Reflect.defineMetadata(
         INJECTOR_INTERFACES_METADATA,
         implementings,
-        target
+        target,
       );
     }
 

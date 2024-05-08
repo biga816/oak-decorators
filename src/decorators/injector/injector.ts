@@ -1,4 +1,4 @@
-import { Reflect } from "../../deps.ts";
+import { Reflect } from "deno_reflect";
 
 export type Constructor<T = unknown> = new (...args: any[]) => T;
 
@@ -8,14 +8,14 @@ export interface InjectionMetadata {
 
 export function setInjectionMetadata(
   Type: Constructor,
-  metadata: InjectionMetadata
+  metadata: InjectionMetadata,
 ) {
   Reflect.defineMetadata("di:metadata", metadata, Type);
 }
 
 export function bootstrap<T>(
   Type: Constructor<T>,
-  overrides = new Map<Constructor, Constructor>()
+  overrides = new Map<Constructor, Constructor>(),
 ): T {
   return new Injector(overrides).bootstrap(Type);
 }
@@ -40,8 +40,8 @@ export class Injector {
   private resolve(Types: Constructor[]): void {
     const unresolved = new Map(
       [...this.discoverDependencies(Types)].filter(
-        ([T]) => !this.resolved.has(T)
-      )
+        ([T]) => !this.resolved.has(T),
+      ),
     );
 
     while (unresolved.size > 0) {
@@ -52,18 +52,18 @@ export class Injector {
         const unresolvable = [...unresolved]
           .map(
             ([Type, { dependencies }]) =>
-              `${Type.name} (-> ${dependencies.map((D) => D.name).join(",")})`
+              `${Type.name} (-> ${dependencies.map((D) => D.name).join(",")})`,
           )
           .join(", ");
         throw new Error(
-          `Dependency cycle detected: Failed to resolve ${unresolvable}`
+          `Dependency cycle detected: Failed to resolve ${unresolvable}`,
         );
       }
       const [Next, meta] = nextResolvable;
 
       const createInstance = () =>
         new Next(
-          ...meta.dependencies.map((Dep) => this.resolved.get(Dep)!())
+          ...meta.dependencies.map((Dep) => this.resolved.get(Dep)!()),
         ) as typeof Next;
       if (meta.isSingleton) {
         const instance = createInstance();
@@ -78,7 +78,7 @@ export class Injector {
   private getInjectionMetadata(Type: Constructor): InjectionMetadata {
     const metadata: InjectionMetadata | undefined = Reflect.getOwnMetadata(
       "di:metadata",
-      Type
+      Type,
     );
     if (!metadata) {
       throw new TypeError(`Type ${Type.name} is not injectable`);
@@ -104,7 +104,7 @@ export class Injector {
   }
 
   private discoverDependencies(
-    Types: Constructor[]
+    Types: Constructor[],
   ): Map<Constructor, InjectionMetadata & { dependencies: Constructor[] }> {
     const discovered = new Map<
       Constructor,
@@ -122,7 +122,7 @@ export class Injector {
         .forEach((Dep) => {
           if (!this.isInjectable(Dep)) {
             throw new TypeError(
-              `Dependency ${Dep.name} of ${Next.name} is not injectable`
+              `Dependency ${Dep.name} of ${Next.name} is not injectable`,
             );
           }
           undiscovered.add(Dep);

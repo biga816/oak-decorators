@@ -3,7 +3,9 @@
   "editor.formatOnSave": true,
   "deno.enable": true,
   "deno.lint": true,
-  "deno.importMap": "./test/importMap.json",
-  "deno.config": "./tsconfig.json",
-  "editor.defaultFormatter": "denoland.vscode-deno"
+  "deno.config": "./deno.jsonc",
+  "editor.defaultFormatter": "denoland.vscode-deno",
+  "[typescript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  }
 }

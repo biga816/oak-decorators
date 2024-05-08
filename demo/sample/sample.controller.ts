@@ -1,4 +1,4 @@
-import { Body, Controller, Get, IP, Param, Post, Query } from "ork_decorators";
+import { Body, Controller, Get, IP, Param, Post, Query } from "oak_decorators";
 import { SampleService } from "./sample.service.ts";
 
 @Controller()

@@ -1,26 +1,25 @@
+import { Reflect } from "deno_reflect";
 import { ROUTE_ARGS_METADATA } from "../const.ts";
-import { Reflect } from "../deps.ts";
 import { RouteParamtypes } from "../enums/mod.ts";
 import { ParamData, RouteArgsMetadata } from "../interfaces/mod.ts";
 import { isNil, isString } from "../utils/router.util.ts";
 
 function createPipesRouteParamDecorator(paramtype: RouteParamtypes) {
-  return (data?: ParamData): ParameterDecorator =>
-    (target, key, index) => {
-      if (!key) return;
-      const args: RouteArgsMetadata[] =
-        Reflect.getMetadata(ROUTE_ARGS_METADATA, target, key) || [];
-      const hasParamData = isNil(data) || isString(data);
-      const paramData = hasParamData ? data : undefined;
+  return (data?: ParamData): ParameterDecorator => (target, key, index) => {
+    if (!key) return;
+    const args: RouteArgsMetadata[] =
+      Reflect.getMetadata(ROUTE_ARGS_METADATA, target, key) || [];
+    const hasParamData = isNil(data) || isString(data);
+    const paramData = hasParamData ? data : undefined;
 
-      args.push({
-        paramtype,
-        index,
-        data: paramData,
-      });
+    args.push({
+      paramtype,
+      index,
+      data: paramData,
+    });
 
-      Reflect.defineMetadata(ROUTE_ARGS_METADATA, args, target, key);
-    };
+    Reflect.defineMetadata(ROUTE_ARGS_METADATA, args, target, key);
+  };
 }
 
 export function Request(property?: string): ParameterDecorator {
