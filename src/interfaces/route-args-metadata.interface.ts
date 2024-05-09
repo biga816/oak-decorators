@@ -1,4 +1,4 @@
-import { RouterContext } from "../deps.ts";
+import { RouterContext } from "oak";
 import { RouteParamtypes } from "../enums/mod.ts";
 export type ParamData = Record<string, unknown> | string | number;
 

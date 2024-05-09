@@ -1,4 +1,4 @@
-import { Injectable } from "ork_decorators";
+import { Injectable } from "oak_decorators";
 
 @Injectable()
 export class SampleService {

@@ -1,20 +1,20 @@
-import { Reflect } from '../deps.ts';
-import { ActionMetadata, HTTPMethods } from '../interfaces/mod.ts';
-import { METHOD_METADATA } from '../const.ts';
+import { Reflect } from "deno_reflect";
+import { METHOD_METADATA } from "../const.ts";
+import { ActionMetadata, HTTPMethods } from "../interfaces/mod.ts";
 
-export const Get = mappingMethod('get');
-export const Post = mappingMethod('post');
-export const Put = mappingMethod('put');
-export const Patch = mappingMethod('patch');
-export const Delete = mappingMethod('delete');
-export const All = mappingMethod('all');
+export const Get = mappingMethod("get");
+export const Post = mappingMethod("post");
+export const Put = mappingMethod("put");
+export const Patch = mappingMethod("patch");
+export const Delete = mappingMethod("delete");
+export const All = mappingMethod("all");
 
 function mappingMethod(method: HTTPMethods) {
-  return (path = '') =>
-    (target: unknown, functionName: string, _: PropertyDescriptor) => {
-      const meta: ActionMetadata = { path, method, functionName };
-      addMetadata(meta, target, METHOD_METADATA);
-    };
+  return (path = "") =>
+  (target: unknown, functionName: string, _: PropertyDescriptor) => {
+    const meta: ActionMetadata = { path, method, functionName };
+    addMetadata(meta, target, METHOD_METADATA);
+  };
 }
 
 function addMetadata<T>(value: T, target: unknown, key: symbol) {

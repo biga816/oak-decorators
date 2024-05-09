@@ -1,4 +1,5 @@
-import { Next, Reflect, Router, RouterContext } from "../deps.ts";
+import { Reflect } from "deno_reflect";
+import { Next, Router, RouterContext } from "oak";
 import { bootstrap } from "../mod.ts";
 
 import {
@@ -25,18 +26,18 @@ export const isNil = (obj: any): obj is null | undefined =>
 const createRouter = (
   { controllers, providers = [], routePrefix }: CreateRouterOption,
   prefix?: string,
-  router = new Router()
+  router = new Router(),
 ) => {
   controllers.forEach((Controller) => {
     const requiredProviders = (
       Reflect.getMetadata(
         "design:paramtypes",
-        Object.getPrototypeOf(Controller)
+        Object.getPrototypeOf(Controller),
       ) || []
     ).map((requiredProvider: ClassConstructor, idx: number) => {
       const { injectables } = Reflect.getMetadata(
         CONTROLLER_METADATA,
-        Controller
+        Controller,
       ) || { injectables: [] };
       const provider = providers.find((provider) => {
         const implementing =
@@ -45,16 +46,16 @@ const createRouter = (
           provider === requiredProvider ||
           Object.prototype.isPrototypeOf.call(
             provider.prototype,
-            requiredProvider.prototype
+            requiredProvider.prototype,
           ) ||
           implementing.includes(injectables[idx])
         );
       });
       if (!provider) {
         throw new Error(
-          `Provider of type ${
-            requiredProvider.name
-          } not found for controller: ${Object.getPrototypeOf(Controller).name}`
+          `Provider of type ${requiredProvider.name} not found for controller: ${
+            Object.getPrototypeOf(Controller).name
+          }`,
         );
       }
       return provider;
@@ -77,7 +78,7 @@ const createRouter = (
 const getRouter = (module: any, prefix?: string, router?: Router) => {
   const mainModuleOption: CreateRouterOption = Reflect.getMetadata(
     MODULE_METADATA,
-    module.prototype
+    module.prototype,
   );
 
   const newRouter = createRouter(mainModuleOption, prefix, router);
@@ -108,8 +109,8 @@ export const registerMiddlewareMethodDecorator = (
   methodName: string,
   handler: (
     ctx: RouterContext<any, Record<string, any>, any>,
-    next: Next
-  ) => void
+    next: Next,
+  ) => void,
 ) => {
   const middleware =
     Reflect.getMetadata(MIDDLEWARE_METADATA, target, methodName) || [];
@@ -128,22 +129,22 @@ export const registerMiddlewareMethodDecorator = (
 export const registerCustomRouteParamDecorator = (
   target: ClassConstructor,
   methodName: string,
-  paramIndex: number
+  paramIndex: number,
 ) => {
   return (data?: ParamData) =>
-    (handler: (ctx: RouterContext<string>) => void) => {
-      const args: RouteArgsMetadata[] =
-        Reflect.getMetadata(ROUTE_ARGS_METADATA, target, methodName) || [];
-      const hasParamData = isNil(data) || isString(data);
-      const paramData = hasParamData ? data : undefined;
+  (handler: (ctx: RouterContext<string>) => void) => {
+    const args: RouteArgsMetadata[] =
+      Reflect.getMetadata(ROUTE_ARGS_METADATA, target, methodName) || [];
+    const hasParamData = isNil(data) || isString(data);
+    const paramData = hasParamData ? data : undefined;
 
-      args.push({
-        paramtype: RouteParamtypes.CUSTOM,
-        index: paramIndex,
-        data: paramData,
-        handler,
-      });
+    args.push({
+      paramtype: RouteParamtypes.CUSTOM,
+      index: paramIndex,
+      data: paramData,
+      handler,
+    });
 
-      Reflect.defineMetadata(ROUTE_ARGS_METADATA, args, target, methodName);
-    };
+    Reflect.defineMetadata(ROUTE_ARGS_METADATA, args, target, methodName);
+  };
 };
