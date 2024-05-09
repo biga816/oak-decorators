@@ -1,12 +1,11 @@
 // deno-lint-ignore-file no-explicit-any
-import { Reflect } from "deno_reflect";
-import { helpers, Router, RouterContext } from "oak";
 import {
   CONTROLLER_METADATA,
   METHOD_METADATA,
   MIDDLEWARE_METADATA,
   ROUTE_ARGS_METADATA,
 } from "../const.ts";
+import { helpers, Reflect, Router, RouterContext } from "../deps.ts";
 import { RouteParamtypes } from "../enums/mod.ts";
 import { ActionMetadata, RouteArgsMetadata } from "../interfaces/mod.ts";
 import logger from "../utils/logger.ts";

@@ -1,5 +1,5 @@
-import { Reflect } from "deno_reflect";
 import { ROUTE_ARGS_METADATA } from "../const.ts";
+import { Reflect } from "../deps.ts";
 import { RouteParamtypes } from "../enums/mod.ts";
 import { ParamData, RouteArgsMetadata } from "../interfaces/mod.ts";
 import { isNil, isString } from "../utils/router.util.ts";

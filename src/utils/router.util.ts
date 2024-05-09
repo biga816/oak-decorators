@@ -1,5 +1,4 @@
-import { Reflect } from "deno_reflect";
-import { Next, Router, RouterContext } from "oak";
+import { Next, Reflect, Router, RouterContext } from "../deps.ts";
 import { bootstrap } from "../mod.ts";
 
 import {

@@ -1,5 +1,5 @@
-import { Reflect } from "deno_reflect";
 import { METHOD_METADATA } from "../const.ts";
+import { Reflect } from "../deps.ts";
 import { ActionMetadata, HTTPMethods } from "../interfaces/mod.ts";
 
 export const Get = mappingMethod("get");

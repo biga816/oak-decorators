@@ -1,5 +1,5 @@
-import { Reflect } from "deno_reflect";
 import { MODULE_METADATA } from "../const.ts";
+import { Reflect } from "../deps.ts";
 import { CreateRouterOption } from "../interfaces/mod.ts";
 import { ClassConstructor } from "../types.ts";
 
