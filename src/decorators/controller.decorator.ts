@@ -127,7 +127,7 @@ async function getContextData(
       return data ? params[data.toString()] : params;
     }
     case RouteParamtypes.BODY: {
-      const value = await req.body().value;
+      const value = await req.body.json();
       return data ? value[data.toString()] : value;
     }
     case RouteParamtypes.HEADERS: {
