@@ -4,9 +4,9 @@ import {
   Next,
   Router,
   RouterContext,
-} from "jsr:@oak/oak@15.0.0";
+} from "https://deno.land/x/oak@v15.0.0/mod.ts";
 
 export { Application, helpers, Router };
 export type { Next, RouterContext };
 
-export { Reflect } from "jsr:@dx/inject@0.1.6";
+export { Reflect } from "https://deno.land/x/deno_reflect@v0.2.1/mod.ts";
