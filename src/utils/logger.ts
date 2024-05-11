@@ -16,7 +16,7 @@ export function setLogger(newLogger: Logger): void {
 }
 
 // Proxy handler
-const handler: ProxyHandler<{}> = {
+const handler: ProxyHandler<object> = {
   get(_target, prop, _receiver) {
     if (logger && typeof prop === "string" && prop in logger) {
       return (...args: unknown[]) => {

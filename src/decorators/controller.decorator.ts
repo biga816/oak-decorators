@@ -12,7 +12,7 @@ import logger from "../utils/logger.ts";
 
 type Next = () => Promise<unknown>;
 
-export function Controller<T extends { new (...instance: any[]): Object }>(
+export function Controller<T extends { new (...instance: any[]): object }>(
   options?:
     | string
     | {

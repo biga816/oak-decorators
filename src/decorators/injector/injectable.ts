@@ -16,6 +16,7 @@ export function Injectable<T>({
     ? implementing
     : [implementing];
 
+  // deno-lint-ignore no-explicit-any
   return (target: any) => {
     if (implementings.length > 0) {
       Reflect.defineMetadata(

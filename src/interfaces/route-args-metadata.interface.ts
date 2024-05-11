@@ -6,5 +6,6 @@ export interface RouteArgsMetadata {
   paramtype: RouteParamtypes;
   index: number;
   data?: ParamData;
+  // deno-lint-ignore no-explicit-any
   handler?: (ctx: RouterContext<string>, data?: ParamData) => any;
 }

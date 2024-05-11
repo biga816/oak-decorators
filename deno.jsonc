@@ -6,5 +6,10 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
+  "lint": {
+    "exclude": [
+      "demo/**/*.ts"
+    ]
+  },
   "lock": false
 }

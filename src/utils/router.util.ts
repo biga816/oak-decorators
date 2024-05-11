@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import { Next, Reflect, Router, RouterContext } from "../deps.ts";
 import { bootstrap } from "../mod.ts";
 
@@ -16,10 +17,10 @@ import {
 } from "../interfaces/mod.ts";
 import { ClassConstructor } from "../types.ts";
 
-export const isUndefined = (obj: any): obj is undefined =>
+export const isUndefined = (obj: unknown): obj is undefined =>
   typeof obj === "undefined";
-export const isString = (fn: any): fn is string => typeof fn === "string";
-export const isNil = (obj: any): obj is null | undefined =>
+export const isString = (fn: unknown): fn is string => typeof fn === "string";
+export const isNil = (obj: unknown): obj is null | undefined =>
   isUndefined(obj) || obj === null;
 
 const createRouter = (
