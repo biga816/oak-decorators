@@ -5,10 +5,11 @@ import {
   MIDDLEWARE_METADATA,
   ROUTE_ARGS_METADATA,
 } from "../const.ts";
-import { helpers, Reflect, Router, RouterContext } from "../deps.ts";
+import { Reflect, Router, RouterContext } from "../deps.ts";
 import { RouteParamtypes } from "../enums/mod.ts";
 import { ActionMetadata, RouteArgsMetadata } from "../interfaces/mod.ts";
 import logger from "../utils/logger.ts";
+import { getQuery } from "../utils/oak-helpers.ts";
 
 type Next = () => Promise<unknown>;
 
@@ -119,7 +120,7 @@ async function getContextData(
       return next;
     }
     case RouteParamtypes.QUERY: {
-      const query = helpers.getQuery(ctx);
+      const query = getQuery(ctx);
       return data ? query[data.toString()] : query;
     }
     case RouteParamtypes.PARAM: {
