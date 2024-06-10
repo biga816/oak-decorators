@@ -131,20 +131,17 @@ export const registerCustomRouteParamDecorator = (
   methodName: string,
   paramIndex: number,
 ) => {
-  return (data?: ParamData) =>
-  (handler: (ctx: RouterContext<string>) => void) => {
+  return ((handler: (ctx: RouterContext<string>) => void) => {
     const args: RouteArgsMetadata[] =
       Reflect.getMetadata(ROUTE_ARGS_METADATA, target, methodName) || [];
-    const hasParamData = isNil(data) || isString(data);
-    const paramData = hasParamData ? data : undefined;
 
     args.push({
       paramtype: RouteParamtypes.CUSTOM,
       index: paramIndex,
-      data: paramData,
+      data: undefined,
       handler,
     });
 
     Reflect.defineMetadata(ROUTE_ARGS_METADATA, args, target, methodName);
-  };
+  });
 };
