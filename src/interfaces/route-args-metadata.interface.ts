@@ -1,11 +1,9 @@
 import { RouterContext } from "../deps.ts";
 import { RouteParamtypes } from "../enums/mod.ts";
-export type ParamData = Record<string, unknown> | string | number;
-
-export interface RouteArgsMetadata {
+export interface RouteArgsMetadata<T = unknown> {
   paramtype: RouteParamtypes;
   index: number;
-  data?: ParamData;
+  data?: T;
   // deno-lint-ignore no-explicit-any
-  handler?: (ctx: RouterContext<string>, data?: ParamData) => any;
+  handler?: (data: T, ctx: RouterContext<string>) => any;
 }

@@ -1,6 +1,6 @@
 # Oak Decorators
 
-NestJS-style decorators library for Deno's
+NestJS-style decorators library for the Deno framework,
 [oak](https://github.com/oakserver/oak).
 
 ## TL;DR Key features:
@@ -231,40 +231,36 @@ import { MockUserService, UserService } from "./sample.service.ts";
 export class SampleModule {}
 ```
 
-### Custom Middleware Decorators
+### Custom Method Decorators
 
 It's possible to register middleware that can be used in controllers by means of
-decorators.
+method decorators.
 
 For instance, to protect routes based on user roles, you can create a
-`@RequiresRole` middleware decorator.
+`@RequiresRole` method decorator.
 
 ```typescript
 // ./middleware.ts
-import { registerMiddlewareMethodDecorator } from "https://deno.land/x/oak_decorators/mod.ts";
-import { Context } from "https://deno.land/x/oak/mod.ts";
+import { createMethodDecorator } from "https://deno.land/x/oak_decorators/mod.ts";
 
-function checkUserRoles(context: Context, roles: string[]) {
+function checkUserRoles(roles?: string[]) {
   // Logic to check the user role
   return false;
 }
 
-export function RequiresRole(roles: string[]) {
-  return function (target, methodName) {
-    const requiresRole = async (context, next) => {
-      // Logic to check the user session or JWT for the required role
-      if (checkUserRoles(context, roles)) {
-        await next();
-      } else {
-        // handle unauthorized access
-        context.response.status = 401;
-        context.response.body = { error: "Unauthorized" };
-        return;
-      }
-    };
-    registerMiddlewareMethodDecorator(target, methodName, requiresRole);
-  };
-}
+export const RequiresRole = createMethodDecorator<string[]>(
+  async (roles, context, next) => {
+    // Logic to check the user session or JWT for the required role
+    if (checkUserRoles(roles)) {
+      await next();
+    } else {
+      // handle unauthorized access
+      context.response.status = 401;
+      context.response.body = { error: "Unauthorized" };
+      return;
+    }
+  },
+);
 ```
 
 Then you can use the `@RequiresRole` decorator in your controllers's methods.
@@ -283,7 +279,7 @@ export default class SampleController {
 }
 ```
 
-### Custom endpoint parameters decorator
+### Custom Parameters Decorator
 
 It's also possible to register custom parameters decorators to streamline data
 injection into endpoint handlers
@@ -296,17 +292,13 @@ and stores it in `context.state.jwtData`.
 Then a param decorator could be defined as follows:
 
 ```typescript
-export function JWT(propName?: string) {
-  return function (targetClass: any, methodName: string, paramIndex: number) {
-    const handler = (ctx: Context) =>
-      propName ? ctx.state.jwtData?.[propName] : ctx.state.jwtData;
-    registerCustomRouteParamDecorator(
-      targetClass,
-      methodName,
-      paramIndex,
-    )(handler);
-  };
-}
+import { createParamDecorator } from "https://deno.land/x/oak_decorators/mod.ts";
+
+export const JWT = createParamDecorator<string>(
+  (data, ctx) => {
+    return data ? ctx.state.jwtData?.[data] : ctx.state.jwtData;
+  },
+);
 ```
 
 And used in controllers like this:
@@ -326,19 +318,13 @@ efficient strategy than having a middleware that always retrieves session data
 if this is not desirable.
 
 ```typescript
-export function SessionData() {
-  return function (targetClass: any, methodName: string, paramIndex: number) {
-    const handler = (ctx: Context) =>
-      ctx.state.jwtData?.sid
-        ? await retrieveSession(ctx.state.jwtData?.sid)
-        : null;
-    registerCustomRouteParamDecorator(
-      targetClass,
-      methodName,
-      paramIndex,
-    )(handler);
-  };
-}
+export const SessionData = createParamDecorator<undefined>(
+  async (_data, ctx) => {
+    return ctx.state.jwtData?.sid
+      ? await retrieveSession(ctx.state.jwtData?.sid)
+      : null;
+  },
+);
 ```
 
 ```typescript
