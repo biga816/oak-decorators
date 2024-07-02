@@ -139,7 +139,7 @@ async function getContextData(
       return req.ip;
     }
     case RouteParamtypes.CUSTOM: {
-      return await args.handler!(ctx, data);
+      return await args.handler!(data, ctx);
     }
     default:
       return;

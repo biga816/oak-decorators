@@ -4,7 +4,7 @@
     "emitDecoratorMetadata": true
   },
   "imports": {
-    "oak": "jsr:@oak/oak@15.0.0",
+    "oak": "jsr:@oak/oak@16.0.0",
     "oak_decorators": "../src/mod.ts"
   },
   "lock": false

@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import { Next, Reflect, Router, RouterContext } from "../deps.ts";
+import { Context, Next, Reflect, Router, RouterContext } from "../deps.ts";
 import { bootstrap } from "../mod.ts";
 
 import {
@@ -10,11 +10,7 @@ import {
   ROUTE_ARGS_METADATA,
 } from "../const.ts";
 import { RouteParamtypes } from "../enums/mod.ts";
-import {
-  CreateRouterOption,
-  ParamData,
-  RouteArgsMetadata,
-} from "../interfaces/mod.ts";
+import { CreateRouterOption, RouteArgsMetadata } from "../interfaces/mod.ts";
 import { ClassConstructor } from "../types.ts";
 
 export const isUndefined = (obj: unknown): obj is undefined =>
@@ -95,53 +91,53 @@ export const assignModule = (module: any) => {
   return router.routes();
 };
 
-/**
- * Registers a decorator that can be added to a controller's
- * method. The handler will be called at runtime when the
- * endpoint method is invoked with the Context and Next parameters.
- *
- * @param target decorator's target
- * @param methodName decorator's method name
- * @param handler decorator's handler
- */
-export const registerMiddlewareMethodDecorator = (
-  target: ClassConstructor,
-  methodName: string,
+export const createMethodDecorator = <T = string>(
   handler: (
+    data: T | undefined,
     ctx: RouterContext<any, Record<string, any>, any>,
     next: Next,
   ) => void,
 ) => {
-  const middleware =
-    Reflect.getMetadata(MIDDLEWARE_METADATA, target, methodName) || [];
-  middleware.push(handler);
-  Reflect.defineMetadata(MIDDLEWARE_METADATA, middleware, target, methodName);
+  return ((data?: T) => (target: unknown, methodName: string) => {
+    const middleware =
+      Reflect.getMetadata(MIDDLEWARE_METADATA, target, methodName) || [];
+    middleware.push((
+      context: RouterContext<any, Record<string, any>, any>,
+      next: Next,
+    ) => handler(data, context, next));
+    Reflect.defineMetadata(MIDDLEWARE_METADATA, middleware, target, methodName);
+  });
 };
 
-/**
- * Registers a custom route parameter decorator.
- *
- * @param {ClassConstructor} target - the target object
- * @param {string} methodName - the name of the method
- * @param {number} paramIndex - the index of the parameter
- * @return {(data?: ParamData) => (handler: (ctx: RouterContext<string>) => void) => void} a function that takes optional data and returns a function that requires the param's handler as only parameter
- */
-export const registerCustomRouteParamDecorator = (
-  target: ClassConstructor,
-  methodName: string,
-  paramIndex: number,
-) => {
-  return ((handler: (ctx: RouterContext<string>) => void) => {
-    const args: RouteArgsMetadata[] =
-      Reflect.getMetadata(ROUTE_ARGS_METADATA, target, methodName) || [];
+export const createParamDecorator = <T = string>(
+  handler: (data: T | undefined, ctx: Context) => any,
+) =>
+(data?: T) =>
+  registerRouteParamDecorator(
+    RouteParamtypes.CUSTOM,
+    data,
+    handler,
+  );
+
+export const registerRouteParamDecorator = <T>(
+  paramtype: RouteParamtypes,
+  data: T | undefined,
+  handler: (data: T, ctx: RouterContext<string>) => void,
+): ParameterDecorator => {
+  return (target, key, index) => {
+    if (!key) return;
+    const args: RouteArgsMetadata<T>[] =
+      Reflect.getMetadata(ROUTE_ARGS_METADATA, target, key) || [];
+    const hasParamData = isNil(data) || isString(data);
+    const paramData = hasParamData ? data : undefined;
 
     args.push({
-      paramtype: RouteParamtypes.CUSTOM,
-      index: paramIndex,
-      data: undefined,
+      paramtype,
+      index,
+      data: paramData,
       handler,
     });
 
-    Reflect.defineMetadata(ROUTE_ARGS_METADATA, args, target, methodName);
-  });
+    Reflect.defineMetadata(ROUTE_ARGS_METADATA, args, target, key);
+  };
 };
