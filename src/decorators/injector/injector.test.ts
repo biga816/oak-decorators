@@ -5,7 +5,8 @@ import {
   assertNotStrictEquals,
   assertStrictEquals,
   assertThrows,
-} from "https://deno.land/std@0.71.0/testing/asserts.ts";
+} from "jsr:@std/assert@1.0.0";
+import "npm:reflect-metadata@0.2.1";
 import {
   bootstrap,
   Bootstrapped,
