@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import { Context, Next, Reflect, Router, RouterContext } from "../deps.ts";
+import { Context, Next, Router, RouterContext } from "../deps.ts";
 import { bootstrap } from "../mod.ts";
 
 import {
@@ -98,7 +98,7 @@ export const createMethodDecorator = <T = string>(
     next: Next,
   ) => void,
 ) => {
-  return ((data?: T) => (target: unknown, methodName: string) => {
+  return ((data?: T) => (target: object, methodName: string) => {
     const middleware =
       Reflect.getMetadata(MIDDLEWARE_METADATA, target, methodName) || [];
     middleware.push((
@@ -122,7 +122,7 @@ export const createParamDecorator = <T = string>(
 export const registerRouteParamDecorator = <T>(
   paramtype: RouteParamtypes,
   data: T | undefined,
-  handler: (data: T, ctx: RouterContext<string>) => void,
+  handler?: (data: T, ctx: RouterContext<string>) => void,
 ): ParameterDecorator => {
   return (target, key, index) => {
     if (!key) return;

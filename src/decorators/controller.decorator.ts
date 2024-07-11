@@ -5,7 +5,7 @@ import {
   MIDDLEWARE_METADATA,
   ROUTE_ARGS_METADATA,
 } from "../const.ts";
-import { Reflect, Router, RouterContext } from "../deps.ts";
+import { Router, RouterContext } from "../deps.ts";
 import { RouteParamtypes } from "../enums/mod.ts";
 import { ActionMetadata, RouteArgsMetadata } from "../interfaces/mod.ts";
 import logger from "../utils/logger.ts";

@@ -1,5 +1,3 @@
-import { Reflect } from "../../deps.ts";
-
 import { INJECTOR_INTERFACES_METADATA } from "../../const.ts";
 import { setInjectionMetadata } from "./injector.ts";
 
