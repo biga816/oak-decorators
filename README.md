@@ -1,7 +1,7 @@
 # Oak Decorators
 
-NestJS-style decorators library for the Deno framework,
-[oak](https://github.com/oakserver/oak).
+NestJS-style decorators library for the Deno framework
+"[oak](https://github.com/oakserver/oak)".
 
 ## TL;DR Key features:
 

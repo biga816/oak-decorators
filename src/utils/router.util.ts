@@ -1,5 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
-import { Context, Next, Router, RouterContext } from "../deps.ts";
+import type { Context, Middleware, Next, RouterContext } from "../deps.ts";
+import { Router } from "../deps.ts";
 import { bootstrap } from "../mod.ts";
 
 import {
@@ -10,8 +11,19 @@ import {
   ROUTE_ARGS_METADATA,
 } from "../const.ts";
 import { RouteParamtypes } from "../enums/mod.ts";
-import { CreateRouterOption, RouteArgsMetadata } from "../interfaces/mod.ts";
-import { ClassConstructor } from "../types.ts";
+import type {
+  CreateRouterOption,
+  RouteArgsMetadata,
+} from "../interfaces/mod.ts";
+import type { ClassConstructor } from "../types.ts";
+
+export type MethodDecorator<T = string> = (
+  data?: T,
+) => (target: object, methodName: string) => void;
+
+export type ParamDecorator<T = string> = (
+  data?: T,
+) => ParameterDecorator;
 
 export const isUndefined = (obj: unknown): obj is undefined =>
   typeof obj === "undefined";
@@ -22,8 +34,8 @@ export const isNil = (obj: unknown): obj is null | undefined =>
 const createRouter = (
   { controllers, providers = [], routePrefix }: CreateRouterOption,
   prefix?: string,
-  router = new Router(),
-) => {
+  router: Router = new Router(),
+): Router => {
   controllers.forEach((Controller) => {
     const requiredProviders = (
       Reflect.getMetadata(
@@ -71,7 +83,11 @@ const createRouter = (
   return router;
 };
 
-const getRouter = (module: any, prefix?: string, router?: Router) => {
+const getRouter = (
+  module: any,
+  prefix?: string,
+  router?: Router,
+): Router => {
   const mainModuleOption: CreateRouterOption = Reflect.getMetadata(
     MODULE_METADATA,
     module.prototype,
@@ -86,7 +102,7 @@ const getRouter = (module: any, prefix?: string, router?: Router) => {
   return newRouter;
 };
 
-export const assignModule = (module: any) => {
+export const assignModule = (module: any): Middleware => {
   const router = getRouter(module);
   return router.routes();
 };
@@ -97,7 +113,7 @@ export const createMethodDecorator = <T = string>(
     ctx: RouterContext<any, Record<string, any>, any>,
     next: Next,
   ) => void,
-) => {
+): MethodDecorator<T> => {
   return ((data?: T) => (target: object, methodName: string) => {
     const middleware =
       Reflect.getMetadata(MIDDLEWARE_METADATA, target, methodName) || [];
@@ -111,7 +127,7 @@ export const createMethodDecorator = <T = string>(
 
 export const createParamDecorator = <T = string>(
   handler: (data: T | undefined, ctx: Context) => any,
-) =>
+): ParamDecorator<T> =>
 (data?: T) =>
   registerRouteParamDecorator(
     RouteParamtypes.CUSTOM,

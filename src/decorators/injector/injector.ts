@@ -14,7 +14,10 @@ export function setInjectionMetadata(
 
 export function bootstrap<T>(
   Type: Constructor<T>,
-  overrides = new Map<Constructor, Constructor>(),
+  overrides: Map<Constructor, Constructor> = new Map<
+    Constructor,
+    Constructor
+  >(),
 ): T {
   return new Injector(overrides).bootstrap(Type);
 }
@@ -22,7 +25,12 @@ export function bootstrap<T>(
 export class Injector {
   private resolved = new Map<Constructor, () => unknown>();
 
-  constructor(private overrides = new Map<Constructor, Constructor>()) {}
+  constructor(
+    private overrides: Map<Constructor, Constructor> = new Map<
+      Constructor,
+      Constructor
+    >(),
+  ) {}
 
   public bootstrap<T>(Type: Constructor<T>): T {
     if (this.isInjectable(Type)) {

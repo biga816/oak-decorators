@@ -10,7 +10,7 @@ import "npm:reflect-metadata@0.2.1";
 import {
   bootstrap,
   Bootstrapped,
-  Constructor,
+  type Constructor,
   Injectable,
   Injector,
 } from "./mod.ts";

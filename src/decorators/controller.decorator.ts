@@ -5,9 +5,9 @@ import {
   MIDDLEWARE_METADATA,
   ROUTE_ARGS_METADATA,
 } from "../const.ts";
-import { Router, RouterContext } from "../deps.ts";
+import { Router, type RouterContext } from "../deps.ts";
 import { RouteParamtypes } from "../enums/mod.ts";
-import { ActionMetadata, RouteArgsMetadata } from "../interfaces/mod.ts";
+import type { ActionMetadata, RouteArgsMetadata } from "../interfaces/mod.ts";
 import logger from "../utils/logger.ts";
 import { getQuery } from "../utils/oak-helpers.ts";
 
@@ -20,7 +20,7 @@ export function Controller<T extends { new (...instance: any[]): object }>(
       path?: string;
       injectables: Array<string | symbol | null>;
     },
-) {
+): (fn: T) => any {
   const path: string | undefined = typeof options === "string"
     ? options
     : options?.path;
