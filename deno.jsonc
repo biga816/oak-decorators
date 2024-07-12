@@ -1,4 +1,7 @@
 {
+  "name": "@biga816/oak-decorators",
+  "version": "0.2.1",
+  "exports": "./mod.ts",
   "tasks": {
     "demo": "deno run --allow-net --config ./demo/deno.jsonc ./demo/main.ts"
   },

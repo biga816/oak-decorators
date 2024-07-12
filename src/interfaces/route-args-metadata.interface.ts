@@ -1,5 +1,5 @@
-import { RouterContext } from "../deps.ts";
-import { RouteParamtypes } from "../enums/mod.ts";
+import type { RouterContext } from "../deps.ts";
+import type { RouteParamtypes } from "../enums/mod.ts";
 export interface RouteArgsMetadata<T = unknown> {
   paramtype: RouteParamtypes;
   index: number;
