@@ -1,5 +1,8 @@
 # Oak Decorators
 
+[![jsr.io/@oak/oak](https://jsr.io/badges/@biga816/oak-decorators)](https://jsr.io/@biga816/oak-decorators)
+[![deno.land/x/oak](https://deno.land/badge/oak_decorators/version)](https://deno.land/x/oak_decorators)
+
 NestJS-style decorators library for the Deno framework
 "[oak](https://github.com/oakserver/oak)".
 
