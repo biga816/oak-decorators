@@ -5,7 +5,7 @@
   },
   "imports": {
     "oak": "jsr:@oak/oak@16.0.0",
-    "oak_decorators": "../src/mod.ts"
+    "oak_decorators": "jsr:@biga816/oak-decorators"
   },
   "lock": false
 }

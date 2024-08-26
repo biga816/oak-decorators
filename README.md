@@ -26,11 +26,7 @@ Define controllers to handle HTTP endpoints
 
 ```typescript
 // ./controllers/util-controller.ts
-import {
-  Controller,
-  Get,
-  Headers,
-} from "https://deno.land/x/oak_decorators/mod.ts";
+import { Controller, Get, Headers } from "jsr:@biga816/oak-decorators";
 
 @Controller("util")
 export class UtilController {
@@ -50,7 +46,7 @@ Define modules
 
 ```typescript
 // ./app.module.ts
-import { Module } from "https://deno.land/x/oak_decorators/mod.ts";
+import { Module } from "jsr:@biga816/oak-decorators";
 import { UtilController } from "./app.controller.ts";
 
 @Module({
@@ -65,8 +61,8 @@ Register an app module with oak.
 
 ```typescript
 // ./main.ts
-import { Application } from "https://deno.land/x/oak/mod.ts";
-import { assignModule } from "https://deno.land/x/oak_decorators/mod.ts";
+import { Application } from "jsr:@oak/oak";
+import { assignModule } from "jsr:@biga816/oak-decorators";
 import { AppModule } from "./app.module.ts";
 
 const app = new Application();
@@ -100,7 +96,7 @@ The `@Module()` decorator takes those options:
 | `routePrefix` | the prefix name to be set in route as the common ULR for controllers.       |
 
 ```typescript
-import { Module } from "https://deno.land/x/oak_decorators/mod.ts";
+import { Module } from "jsr:@biga816/oak-decorators";
 import { AppController } from "./app.controller.ts";
 import { SampleModule } from "./sample/sample.module.ts";
 
@@ -121,7 +117,7 @@ are responsible for handling incoming requests and returning responses to the
 client. The `@Controller()` decorator take a route path prefix optionally.
 
 ```typescript
-import { Controller, Get } from "https://deno.land/x/oak_decorators/mod.ts";
+import { Controller, Get } from "jsr:@biga816/oak-decorators";
 
 @Controller("sample")
 export class UsersController {
@@ -144,11 +140,7 @@ Handlers often need access to the client request details.\
 HHere's a example to access the request object using `@Req()` decorator.
 
 ```typescript
-import {
-  Controller,
-  Get,
-  Request,
-} from "https://deno.land/x/oak_decorators/mod.ts";
+import { Controller, Get, Request } from "jsr:@biga816/oak-decorators";
 
 @Controller("sample")
 export class SampleController {
@@ -178,7 +170,7 @@ provided.
 
 ```typescript
 // ./sample.service.ts
-import { Injectable } from "https://deno.land/x/oak_decorators/mod.ts";
+import { Injectable } from "jsr:@biga816/oak-decorators";
 import db from "./db-service.ts";
 
 @Injectable()
@@ -207,7 +199,7 @@ export class MockUserService {
 }
 
 // ./sample.controller.ts
-import { Controller, Get } from "https://deno.land/x/oak_decorators/mod.ts";
+import { Controller, Get } from "jsr:@biga816/oak-decorators";
 import { UserService } from "./sample.service.ts";
 
 @Controller("users")
@@ -221,7 +213,7 @@ export class UsersController {
 }
 
 // ./sample.module.ts
-import { Module } from "https://deno.land/x/oak_decorators/mod.ts";
+import { Module } from "jsr:@biga816/oak-decorators";
 import { UsersController } from "./sample.controller.ts";
 import { MockUserService, UserService } from "./sample.service.ts";
 
@@ -244,7 +236,7 @@ For instance, to protect routes based on user roles, you can create a
 
 ```typescript
 // ./middleware.ts
-import { createMethodDecorator } from "https://deno.land/x/oak_decorators/mod.ts";
+import { createMethodDecorator } from "jsr:@biga816/oak-decorators";
 
 function checkUserRoles(roles?: string[]) {
   // Logic to check the user role
@@ -295,7 +287,7 @@ and stores it in `context.state.jwtData`.
 Then a param decorator could be defined as follows:
 
 ```typescript
-import { createParamDecorator } from "https://deno.land/x/oak_decorators/mod.ts";
+import { createParamDecorator } from "jsr:@biga816/oak-decorators";
 
 export const JWT = createParamDecorator<string>(
   (data, ctx) => {
